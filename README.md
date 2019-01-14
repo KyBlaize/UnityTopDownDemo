@@ -5,8 +5,11 @@ Final features of the Game:
   -Mouse aim and firing
   -Timer (ms ~ m)
   -Weapon variants
-  -Distinction between enemy and firendly targets (from weapons fire)
+  -Distinction between enemy and friendly targets (from weapons fire)
 
 Currently Implemented features:
   -Top-down movement
   -Mouse aim
+  -Basic weapons
+  -Stopwatch system
+  -Distinction between enemy and firendly targets
