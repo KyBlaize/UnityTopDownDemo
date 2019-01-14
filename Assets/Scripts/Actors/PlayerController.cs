@@ -13,16 +13,19 @@ public class PlayerController : BaseActor {
     public float Gravity = 20f;
 
     CharacterController characterController;
-    Vector3 direction;
+    Vector3 direction; //Move diretion
     Camera camera;
     
 	void Awake () {
         characterController = GetComponent<CharacterController>();
         camera = Camera.main;
         Health = 100;//Feed directly from the base actor class
+        //--create a new instance of Pistol
         pistol = new Pistol();
-        CurrentGun = pistol;
-        Debug.Log(CurrentGun.ToString());
+        pistol.DamageOut = 10f;
+        pistol.WeaponRange = 50;
+        CurrentGun = pistol;//Set the player's weapon to Pistol
+        //Debug.Log(CurrentGun.ToString());
 	}
 	
 	void Update () {
@@ -43,12 +46,12 @@ public class PlayerController : BaseActor {
         direction = new Vector3(_h, 0, _v);
         direction.Normalize(); //normalize vector to prevent diagonal speed up
         if (Input.GetButtonDown("Fire1"))
-            Attack(transform.position, transform.forward, CurrentGun.WeaponRange);
+            Attack();
     }
 
     private void FixedUpdate()
     {
-        Debug.DrawRay(transform.position, transform.forward * 50, Color.red);//debug the line of fire
+        //Debug.DrawRay(transform.position, transform.forward * 50, Color.red);//debug the line of fire
         //---Apply Gravity
         direction.y = direction.y - (Gravity * Time.deltaTime);
         //---Move
@@ -56,18 +59,19 @@ public class PlayerController : BaseActor {
     }
 
 
-    public override void Attack(Vector3 origin, Vector3 direction, float range)
+    public void Attack()
     {
-        base.Attack(transform.position, transform.forward, CurrentGun.WeaponRange);
-        Vector3 _rayOrigin = origin;
+        //Debug.Log("Fire");
         RaycastHit _hit;
-        if (Physics.Raycast(_rayOrigin, direction, out _hit, range))
+        Debug.DrawRay(transform.position, transform.forward*CurrentGun.WeaponRange, Color.red, 1f);
+        if (Physics.Raycast(transform.position, transform.forward, out _hit, CurrentGun.WeaponRange))
         {
-            TargetDummy target = _hit.collider.GetComponent<TargetDummy>();
-            if (target.MyActorType == ActorType.Enemy)
-            {
+            TargetDummy _target = _hit.collider.GetComponent<TargetDummy>();
+            _target.TakeDamage(CurrentGun.DamageOut);
+            if (_target.MyActorType == ActorType.Enemy)
                 Debug.Log("Enemy Down");
-            }
+            else if (_target.MyActorType == ActorType.Civilian)
+                Debug.Log("Civilians check your fire");
         }
     }
 

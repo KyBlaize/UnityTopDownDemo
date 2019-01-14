@@ -9,13 +9,21 @@ public class BaseActor : MonoBehaviour
     public enum ActorType { Player, Enemy, Civilian, Environment }
     public ActorType MyType { get; set; }
 
-    public virtual void Attack(Vector3 origin, Vector3 direction, float range)
-    {
-        CurrentGun.Fire();
-    }
+    //public virtual void Attack()
+    //{
+        //CurrentGun.Fire();
+    //}
 
     public virtual void TakeDamage(float damageIn)
     {
+        //Debug.Log("I'm hit!");
         Health -= damageIn;
+        if (Health <= 0)
+            Die();
+    }
+
+    public virtual void Die()
+    {
+        //PlayAnimation
     }
 }
