@@ -30,10 +30,4 @@ public class Rifle : BaseGun
             base.WeaponRange = 500f;
         }
     }
-
-    public override void Fire()
-    {
-        base.Fire();
-        Debug.Log("Rifle fired");
-    }
 }

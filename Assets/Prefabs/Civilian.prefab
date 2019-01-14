@@ -165,6 +165,7 @@ GameObject:
   - component: {fileID: 6395009759669006524}
   - component: {fileID: 2216160447107297584}
   - component: {fileID: 3618540158388753437}
+  - component: {fileID: 227707086}
   m_Layer: 0
   m_Name: Civilian
   m_TagString: Untagged
@@ -214,3 +215,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MyActorType: 2
+--- !u!95 &227707086
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8807945444293026134}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7636c2ff31645fc48bd3764d35536594, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

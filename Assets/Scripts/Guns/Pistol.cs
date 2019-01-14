@@ -5,6 +5,7 @@ using UnityEngine;
 public class Pistol : BaseGun
 {
     //Based on the Beretta M92F
+    //This class does not need to override the base weapon's Fire() method
     public override float DamageOut
     {
         get
@@ -29,11 +30,5 @@ public class Pistol : BaseGun
         {
             base.WeaponRange = 50f;
         }
-    }
-
-    public override void Fire()
-    {
-        base.Fire();
-        Debug.Log("Pistol fired");
     }
 }

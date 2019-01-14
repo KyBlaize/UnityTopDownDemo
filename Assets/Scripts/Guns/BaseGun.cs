@@ -32,8 +32,15 @@ public class BaseGun
         set { magazinesize = value; }
     }
 
+    private TargetDummy target;
+    public virtual TargetDummy TargetHit
+    {
+        get { return target; }
+    }
+
     public virtual void Fire()//override in weapon implementations
     {
-        Debug.Log("Weapon fired");
+        //Base implementation
+        //TODO: Implement timer-based firing mechanics (mouse held instead of click)
     }
 }

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : BaseActor {
+public class PlayerController : BaseActor
+{
 
     //---Guns
     Pistol pistol; //just have a pistol for now
     //---Mouse look
-    public float RotationSpeed = 10f; //how fast to turn the player
+    public float RotationSpeed = 10f;
     //---Movement
     public float Speed = 1;
     public float Gravity = 20f;
@@ -15,68 +16,57 @@ public class PlayerController : BaseActor {
     CharacterController characterController;
     Vector3 direction; //Move diretion
     Camera camera;
-    
-	void Awake () {
+
+    void Awake()
+    {
         characterController = GetComponent<CharacterController>();
         camera = Camera.main;
         Health = 100;//Feed directly from the base actor class
         //--create a new instance of Pistol
         pistol = new Pistol();
-        pistol.DamageOut = 10f;
+        pistol.DamageOut = 15f;
         pistol.WeaponRange = 50;
-        CurrentGun = pistol;//Set the player's weapon to Pistol
-        //Debug.Log(CurrentGun.ToString());
-	}
-	
-	void Update () {
-        //Rotate to aim
-        Plane _plane = new Plane(Vector3.up, transform.position);
-        Ray _ray = camera.ScreenPointToRay(Input.mousePosition);
-        float _hitDist = 0f;
+        CurrentGun = pistol;//Set the player's weapon
+    }
+
+    void Update()
+    {
+        #region Aiming
+        Plane _plane = new Plane(Vector3.up, transform.position); //create a plane with the normal pointing up at the player's position
+        Ray _ray = camera.ScreenPointToRay(Input.mousePosition); //convert mouse position to screen position
+        float _hitDist = 0f; //set an initial distance
         if (_plane.Raycast(_ray, out _hitDist))
         {
-            Vector3 _targetPoint = _ray.GetPoint(_hitDist);
-            //transform.rotation = Quaternion.LookRotation(_targetPoint - transform.position);
+            Vector3 _targetPoint = _ray.GetPoint(_hitDist); //set a point that the object will rotate towards
+            //slerp smoothly rotates to the target rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_targetPoint - transform.position), RotationSpeed * Time.deltaTime);
-            //Quaternion _rotation = Quaternion.LookRotation(_targetPoint - transform.position);
-            //transform.rotation = _rotation;
         }
+        #endregion
+
+        #region Movement
         var _v = Input.GetAxis("Vertical"); //Move Forward/Back
         var _h = Input.GetAxis("Horizontal");//Strafe
         direction = new Vector3(_h, 0, _v);
         direction.Normalize(); //normalize vector to prevent diagonal speed up
+        #endregion
+
+        //Fire currently equipped gun (no need to override the base class)
         if (Input.GetButtonDown("Fire1"))
-            Attack();
+        {
+            base.Attack(transform.position, transform.forward, CurrentGun.WeaponRange, CurrentGun.DamageOut);
+        }
     }
 
     private void FixedUpdate()
     {
-        //Debug.DrawRay(transform.position, transform.forward * 50, Color.red);//debug the line of fire
         //---Apply Gravity
         direction.y = direction.y - (Gravity * Time.deltaTime);
         //---Move
-        characterController.Move(direction*Speed*Time.deltaTime);
-    }
-
-
-    public void Attack()
-    {
-        //Debug.Log("Fire");
-        RaycastHit _hit;
-        Debug.DrawRay(transform.position, transform.forward*CurrentGun.WeaponRange, Color.red, 1f);
-        if (Physics.Raycast(transform.position, transform.forward, out _hit, CurrentGun.WeaponRange))
-        {
-            TargetDummy _target = _hit.collider.GetComponent<TargetDummy>();
-            _target.TakeDamage(CurrentGun.DamageOut);
-            if (_target.MyActorType == ActorType.Enemy)
-                Debug.Log("Enemy Down");
-            else if (_target.MyActorType == ActorType.Civilian)
-                Debug.Log("Civilians check your fire");
-        }
+        characterController.Move(direction * Speed * Time.deltaTime);
     }
 
     //---Prevent gimble lock
-    public static float ClampAngle(float angle,float min, float max)
+    public static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360f)
             angle += 360f;

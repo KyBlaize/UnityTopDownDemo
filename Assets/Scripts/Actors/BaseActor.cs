@@ -7,16 +7,22 @@ public class BaseActor : MonoBehaviour
     public float Health { get; set; }
     public virtual BaseGun CurrentGun { get; set; }
     public enum ActorType { Player, Enemy, Civilian, Environment }
-    public ActorType MyType { get; set; }
 
-    //public virtual void Attack()
-    //{
-        //CurrentGun.Fire();
-    //}
+
+    public virtual void Attack(Vector3 origin, Vector3 direction, float weaponrange, float damage)
+    {
+        CurrentGun.Fire();
+        RaycastHit _hit;
+        if (Physics.Raycast(origin, direction, out _hit, weaponrange))
+        {
+            BaseActor _target = _hit.collider.GetComponent<BaseActor>();
+            _target.TakeDamage(damage);
+        }
+    }
 
     public virtual void TakeDamage(float damageIn)
     {
-        //Debug.Log("I'm hit!");
+        Debug.Log("Ouch!");
         Health -= damageIn;
         if (Health <= 0)
             Die();
@@ -24,6 +30,6 @@ public class BaseActor : MonoBehaviour
 
     public virtual void Die()
     {
-        //PlayAnimation
+        //Intentionally empty
     }
 }
