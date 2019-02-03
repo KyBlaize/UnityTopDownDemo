@@ -5,7 +5,10 @@ using UnityEngine;
 public class TargetDummy : BaseActor
 {
     public ActorType MyActorType;
-    Animator animator;
+    public delegate void CallDeath();
+    public event CallDeath Died;
+
+    private Animator animator;
     void Awake()
     {
         Health = 1;
@@ -14,7 +17,11 @@ public class TargetDummy : BaseActor
 
     public override void Die()
     {
-        animator.SetBool("Death", true);
+        animator.SetBool("Death", true); //play an animation
+        if (Died != null) //call my event
+        {
+            Died();
+        }
     }
 
 }

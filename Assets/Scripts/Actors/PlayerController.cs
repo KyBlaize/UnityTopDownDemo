@@ -4,32 +4,38 @@ using UnityEngine;
 
 public class PlayerController : BaseActor
 {
-
-    //---Guns
-    Pistol pistol; //just have a pistol for now
     //---Mouse look
     public float RotationSpeed = 10f;
     //---Movement
     public float Speed = 1;
     public float Gravity = 20f;
 
-    CharacterController characterController;
-    Vector3 direction; //Move diretion
-    Camera camera;
+    private CharacterController characterController;
+    private Vector3 direction; //Move diretion
+    private Camera camera;
+    [SerializeField] private BaseGun baseGun; //Set with the initialize function
+    [SerializeField] private GameObject ourWeapon; //This is the weapon that holds the raycast script
+    private float coolDownDuration; //the cooldown of the current weapon. This is set from the base cooldown
+    private float nextReadyTime; //When we can fire the weapon again
+    private float coolDownTimeLeft;
+
 
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         camera = Camera.main;
         Health = 100;//Feed directly from the base actor class
-        //--create a new instance of Pistol
-        pistol = new Pistol();
-        pistol.DamageOut = 15f;
-        pistol.WeaponRange = 50;
-        CurrentGun = pistol;//Set the player's weapon
+        Initialize(baseGun, ourWeapon);
     }
 
-    void Update()
+    private void Initialize(BaseGun gun, GameObject weapon)
+    {
+        baseGun = gun;
+        coolDownDuration = baseGun.FireRate;
+        baseGun.Initialize(weapon);
+    }
+
+    private void Update()
     {
         #region Aiming
         Plane _plane = new Plane(Vector3.up, transform.position); //create a plane with the normal pointing up at the player's position
@@ -50,11 +56,24 @@ public class PlayerController : BaseActor
         direction.Normalize(); //normalize vector to prevent diagonal speed up
         #endregion
 
-        //Fire currently equipped gun (no need to override the base class)
-        if (Input.GetButtonDown("Fire1"))
+        #region Use Equipment
+        if (Time.time > nextReadyTime)
         {
-            base.Attack(transform.position, transform.forward, CurrentGun.WeaponRange, CurrentGun.DamageOut);
+            if (Input.GetButton("Fire1"))
+            {
+                if (baseGun.CurrentMagazineRemainder > 0)
+                {
+                    UseEquipment();
+                }
+                else
+                {
+                    StartCoroutine(ReloadEquipment());
+                }
+            }
         }
+        else
+            CoolDown();
+        #endregion
     }
 
     private void FixedUpdate()
@@ -63,6 +82,24 @@ public class PlayerController : BaseActor
         direction.y = direction.y - (Gravity * Time.deltaTime);
         //---Move
         characterController.Move(direction * Speed * Time.deltaTime);
+    }
+
+    private void UseEquipment()
+    {
+        nextReadyTime = coolDownDuration + Time.time;
+        coolDownTimeLeft = coolDownDuration;
+        baseGun.Fire();
+    }
+
+    private void CoolDown()
+    {
+        coolDownTimeLeft -= Time.deltaTime;
+    }
+
+    IEnumerator ReloadEquipment() //TODO: Replace this current reload system with an animation driven one
+    {
+        yield return new WaitForSeconds(baseGun.ReloadTime); //This should be replaced with an animation
+        baseGun.Reload();
     }
 
     //---Prevent gimble lock

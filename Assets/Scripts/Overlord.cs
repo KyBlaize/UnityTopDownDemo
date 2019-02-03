@@ -9,14 +9,34 @@ public class Overlord : MonoBehaviour
     //This script contains the game's timer and score tracking system
     int finalscore = 0;
     public Image Pointer;
-    [SerializeField]
-    Text targetText;
-    [SerializeField]
-    Button[] buttons;
-    [HideInInspector]
-    
-    public bool StartTimer = false;
-    public float Currenttime = 0; //the player's current time. Timer starts when the player enters the zone and stops when they leave
+    [SerializeField]Text targetText;
+    [SerializeField]Button[] buttons;
+    [HideInInspector]public bool StartTimer = false;
+    [HideInInspector]public float Currenttime = 0; //the player's current time. Timer starts when the player enters the zone and stops when they leave
+    [SerializeField]private List<TargetDummy> targets = new List<TargetDummy>(); //temporary serialize to expose the list
+
+    private void Awake()
+    {
+    }
+
+    private void OnEnable() //if we are also subscribing to these events, should we use Awake or OnEnable?
+    {
+        var _objects = FindObjectsOfType<TargetDummy>(); //get all potential targets in the level.
+        foreach (TargetDummy actor in _objects)
+        {
+            targets.Add(actor); //add each target to the target list
+            actor.Died += CheckForPenalty; //subscribe to target death events
+        }
+    }
+
+    private void OnDisable()
+    {
+        var _objects = FindObjectsOfType<TargetDummy>();
+        foreach (TargetDummy actor in _objects)
+        {
+            actor.Died -= CheckForPenalty; //unsubscribe to target death events
+        }
+    }
 
     private void Update()
     {
@@ -53,5 +73,6 @@ public class Overlord : MonoBehaviour
     private void CheckForPenalty()
     {
         //TODO: Add target checking and apply penalties based on target type
+        Debug.Log("You got a target!");
     }
 }
