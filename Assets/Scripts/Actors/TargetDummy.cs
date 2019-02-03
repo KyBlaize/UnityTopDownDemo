@@ -18,7 +18,7 @@ public class TargetDummy : BaseActor
     public override void Die()
     {
         animator.SetBool("Death", true); //play an animation
-        if (Died != null) //call my event
+        if (Died != null) //first, ensure that died is not null, then call my event
         {
             Died();
         }
