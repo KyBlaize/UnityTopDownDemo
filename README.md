@@ -7,9 +7,9 @@ Final features of the Game:
   -Weapon variants
   -Distinction between enemy and friendly targets (from weapons fire)
 
-Currently Implemented features:
+Currently Implemented features (as of Feb 3, 2019):
   -Top-down movement
   -Mouse aim
-  -Basic weapons
-  -Stopwatch system
-  -Distinction between enemy and firendly targets
+  -Weapon variants
+  -Timer (ms ~ m)
+  -Distinction between enemy and friendly targets (from weapons fire)
