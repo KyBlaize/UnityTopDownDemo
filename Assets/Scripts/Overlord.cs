@@ -13,11 +13,7 @@ public class Overlord : MonoBehaviour
     [SerializeField]Button[] buttons;
     [HideInInspector]public bool StartTimer = false;
     [HideInInspector]public float Currenttime = 0; //the player's current time. Timer starts when the player enters the zone and stops when they leave
-    [SerializeField]private List<TargetDummy> targets = new List<TargetDummy>(); //temporary serialize to expose the list
-
-    private void Awake()
-    {
-    }
+    private List<TargetDummy> targets = new List<TargetDummy>();
 
     private void OnEnable() //if we are also subscribing to these events, should we use Awake or OnEnable?
     {
@@ -73,6 +69,7 @@ public class Overlord : MonoBehaviour
     private void CheckForPenalty()
     {
         //TODO: Add target checking and apply penalties based on target type
+        //Hittting an enemy does nothing, but hitting a civilian will incur a +1sec to your final time
         Debug.Log("You got a target!");
     }
 }
