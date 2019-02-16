@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class BaseActor : MonoBehaviour
 {
     public float Health { get; set; }
     public enum ActorType { Player, Enemy, Civilian, Environment }
+    public ActorType MyType;
 
     public virtual void Attack(/*Vector3 origin, Vector3 direction, float weaponrange, float damage*/)
     {
@@ -18,16 +20,15 @@ public class BaseActor : MonoBehaviour
         }*/
     }
 
-    public virtual void TakeDamage(float damageIn)
+    public virtual void TakeDamage(float damageIn)//we need to know how much damage to deal
     {
-        //Debug.Log("Ouch!");
         Health -= damageIn;
         if (Health <= 0)
             Die();
     }
 
-    public virtual void Die()
+    public virtual void Die()//needs to know what killed this object
     {
-        //Intentionally empty
+        //Will have code in the implementation
     }
 }

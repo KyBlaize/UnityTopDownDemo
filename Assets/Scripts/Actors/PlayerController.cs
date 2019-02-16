@@ -9,15 +9,16 @@ public class PlayerController : BaseActor
     //---Movement
     public float Speed = 1;
     public float Gravity = 20f;
+    //---Misc.
+    public Transform RightHand;
+    public Transform LeftHand;
 
     private CharacterController characterController;
     private Vector3 direction; //Move diretion
     private Camera camera;
     [SerializeField] private BaseGun baseGun; //Set with the initialize function
     [SerializeField] private GameObject ourWeapon; //This is the weapon that holds the raycast script
-    private float coolDownDuration; //the cooldown of the current weapon. This is set from the base cooldown
-    private float nextReadyTime; //When we can fire the weapon again
-    private float coolDownTimeLeft;
+    
 
 
     void Awake()
@@ -31,7 +32,6 @@ public class PlayerController : BaseActor
     private void Initialize(BaseGun gun, GameObject weapon)
     {
         baseGun = gun;
-        coolDownDuration = baseGun.FireRate;
         baseGun.Initialize(weapon);
     }
 
@@ -57,22 +57,21 @@ public class PlayerController : BaseActor
         #endregion
 
         #region Use Equipment
-        if (Time.time > nextReadyTime)
+        if (Input.GetButton("Fire1"))
         {
-            if (Input.GetButton("Fire1"))
+            if (baseGun.CurrentMagazineRemainder > 0)
             {
-                if (baseGun.CurrentMagazineRemainder > 0)
-                {
-                    UseEquipment();
-                }
-                else
-                {
-                    StartCoroutine(ReloadEquipment());
-                }
+                UseEquipment();
+            }
+            else
+            {
+                StartCoroutine(ReloadEquipment());
             }
         }
-        else
-            CoolDown();
+        if (Input.GetButtonUp("Fire1"))
+        {
+            baseGun.Firing = false;
+        }
         #endregion
     }
 
@@ -86,14 +85,7 @@ public class PlayerController : BaseActor
 
     private void UseEquipment()
     {
-        nextReadyTime = coolDownDuration + Time.time;
-        coolDownTimeLeft = coolDownDuration;
         baseGun.Fire();
-    }
-
-    private void CoolDown()
-    {
-        coolDownTimeLeft -= Time.deltaTime;
     }
 
     IEnumerator ReloadEquipment() //TODO: Replace this current reload system with an animation driven one

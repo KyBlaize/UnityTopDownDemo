@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class TargetDummy : BaseActor
 {
-    public ActorType MyActorType;
-    public delegate void CallDeath();
+    public delegate void CallDeath(ActorType actorType);// the listener needs to know what type of actor got killed
     public event CallDeath Died;
 
     private Animator animator;
@@ -15,12 +14,13 @@ public class TargetDummy : BaseActor
         animator = GetComponent<Animator>();
     }
 
-    public override void Die()
+    public override void Die() //TODO: We also need to track who killed who
     {
         animator.SetBool("Death", true); //play an animation
         if (Died != null) //first, ensure that died is not null, then call my event
         {
-            Died();
+            Died(MyType);//The event listener needs to know what type of object it was
+            //Debug.Log(whoKilledMe.ToString());
         }
     }
 

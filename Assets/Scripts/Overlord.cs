@@ -36,7 +36,7 @@ public class Overlord : MonoBehaviour
 
     private void Update()
     {
-        Pointer.transform.position = Input.mousePosition;
+        Pointer.transform.position = Input.mousePosition; //TODO: Lock this within the bounds of the screen
         if (StartTimer)
         {
             Currenttime += Time.deltaTime;
@@ -56,20 +56,31 @@ public class Overlord : MonoBehaviour
         }
     }
 
-    public void Restart()
+    public void Restart() //This is a temporary entry
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void QuitGame()
+    public void QuitGame() //This is a temporary entry
     {
         Application.Quit();
     }
 
-    private void CheckForPenalty()
+    private void CheckForPenalty(BaseActor.ActorType actorType)
     {
-        //TODO: Add target checking and apply penalties based on target type
         //Hittting an enemy does nothing, but hitting a civilian will incur a +1sec to your final time
-        Debug.Log("You got a target!");
+        if (actorType == BaseActor.ActorType.Player)
+        {
+            Debug.LogWarning("This should not be appearing");
+        }
+        if (actorType == BaseActor.ActorType.Civilian)
+        {
+            Debug.Log("Don't shoot civvies!");
+            Currenttime+=1f;//TODO: Should this be calculated here, or at the end of the level?
+        }
+        if (actorType == BaseActor.ActorType.Enemy)
+        {
+            Debug.Log("It's ok, you can shoot enemies");
+        }
     }
 }

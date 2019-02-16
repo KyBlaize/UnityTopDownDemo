@@ -6,6 +6,7 @@ public class FireRayCastWeapon : MonoBehaviour
 {
     [HideInInspector] public float Damage = 1f;
     [HideInInspector] public float Range = 10f;
+    [HideInInspector] public BaseActor.ActorType ActorType;
     
     public void Fire()
     {

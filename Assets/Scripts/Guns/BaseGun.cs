@@ -9,10 +9,10 @@ using UnityEngine;
  */
 public abstract class BaseGun : ScriptableObject
 {
-    public float FireRate = 1f; //Cooldown
     public float ReloadTime = 1f; //How long it takes to reload the weapon
     public int MagazineSize;
     [HideInInspector] public int CurrentMagazineRemainder;
+    [HideInInspector] public bool Firing = false; //Check if the weapon is firing (useful for semi-auto and burst)
 
     public abstract void Initialize(GameObject obj);
     public abstract void Fire();
