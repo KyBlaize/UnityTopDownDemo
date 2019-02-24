@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Weapons/SemiAuto RayCast Type")]
+[CreateAssetMenu(menuName = "Weapons/SemiAuto RayCast")]
 public class SemiAutoRayCastWeapon : BaseGun
 {
     public float Damage;

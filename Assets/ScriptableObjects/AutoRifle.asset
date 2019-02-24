@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ReloadTime: 1
   MagazineSize: 30
-  CurrentMagazineRemainder: 26
+  CurrentMagazineRemainder: 30
   Firing: 0
-  FireRate: 1
+  FireRate: 0.15
   Damage: 10
   Range: 150

@@ -10,8 +10,8 @@ public class PlayerController : BaseActor
     public float Speed = 1;
     public float Gravity = 20f;
     //---Misc.
-    public Transform RightHand;
-    public Transform LeftHand;
+    public Transform RightHand; //For animated objects
+    public Transform LeftHand; //for animated objects
 
     private CharacterController characterController;
     private Vector3 direction; //Move diretion
@@ -19,14 +19,13 @@ public class PlayerController : BaseActor
     [SerializeField] private BaseGun baseGun; //Set with the initialize function
     [SerializeField] private GameObject ourWeapon; //This is the weapon that holds the raycast script
     
-
-
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         camera = Camera.main;
         Health = 100;//Feed directly from the base actor class
-        Initialize(baseGun, ourWeapon);
+        if (baseGun != null)
+            Initialize(baseGun, ourWeapon);
     }
 
     private void Initialize(BaseGun gun, GameObject weapon)
@@ -57,7 +56,7 @@ public class PlayerController : BaseActor
         #endregion
 
         #region Use Equipment
-        if (Input.GetButton("Fire1"))
+        if (Input.GetButton("Fire1"))//if the button is held down
         {
             if (baseGun.CurrentMagazineRemainder > 0)
             {
@@ -68,7 +67,7 @@ public class PlayerController : BaseActor
                 StartCoroutine(ReloadEquipment());
             }
         }
-        if (Input.GetButtonUp("Fire1"))
+        if (Input.GetButtonUp("Fire1"))//after it is released
         {
             baseGun.Firing = false;
         }
@@ -90,7 +89,7 @@ public class PlayerController : BaseActor
 
     IEnumerator ReloadEquipment() //TODO: Replace this current reload system with an animation driven one
     {
-        yield return new WaitForSeconds(baseGun.ReloadTime); //This should be replaced with an animation
+        yield return new WaitForSeconds(baseGun.ReloadTime); //This will be replaced with an animation
         baseGun.Reload();
     }
 

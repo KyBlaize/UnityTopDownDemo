@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-[CreateAssetMenu(menuName ="Weapons/Automatic RayCast Type")]
+[CreateAssetMenu(menuName ="Weapons/Automatic RayCast")]
 public class AutoRayCastWeapon : BaseGun
 {
     public float FireRate = 1f; //time between shots
@@ -12,12 +12,11 @@ public class AutoRayCastWeapon : BaseGun
 
     private float coolDownDuration; //the cooldown of the current weapon. This is set from the base cooldown
     private float nextReadyTime; //When we can fire the weapon again
-    private float coolDownTimeLeft;
+    private float coolDownTimeLeft = 0;
 
     public override void Initialize(GameObject obj)
     {
         fireRayCastWeapon = obj.GetComponent<FireRayCastWeapon>();
-
         fireRayCastWeapon.Damage = Damage;
         fireRayCastWeapon.Range = Range;
         CurrentMagazineRemainder = MagazineSize;
@@ -26,13 +25,14 @@ public class AutoRayCastWeapon : BaseGun
 
     public override void Fire()
     {
-        if (Time.time > nextReadyTime && !Firing)
+        if (Time.time > nextReadyTime)
         {
             fireRayCastWeapon.Fire();
             CurrentMagazineRemainder--;
-            Debug.Log("Bullets left: "+CurrentMagazineRemainder);
+            Debug.Log("Bullets left: "+CurrentMagazineRemainder); //Replace with UI feedback
             nextReadyTime = coolDownDuration + Time.time;
             coolDownTimeLeft = coolDownDuration;
+            Firing = true;
         }
         else
             CoolDown();
@@ -40,7 +40,7 @@ public class AutoRayCastWeapon : BaseGun
 
     public override void Reload()
     {
-        Debug.Log("Weapon reloaded");
+        Debug.Log("Weapon reloaded"); //Replace with UI feedback
         CurrentMagazineRemainder = MagazineSize;
     }
 
