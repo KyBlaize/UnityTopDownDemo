@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 44752897909754970}
   - component: {fileID: 7457957388953419430}
   - component: {fileID: 296308255497464260}
+  - component: {fileID: 1083309401}
   m_Layer: 0
   m_Name: AK47
   m_TagString: Untagged
@@ -124,3 +125,18 @@ MonoBehaviour:
   Damage: 1
   Range: 10
   ActorType: 0
+  GunEnd: {fileID: 1104288880}
+  ThisGun: {fileID: 11400000, guid: d63d069a6420d724b8a8fc7e976988db, type: 2}
+--- !u!65 &1083309401
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296308255497464259}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 0.5, z: 1.6}
+  m_Center: {x: 0, y: 0, z: 0.3}

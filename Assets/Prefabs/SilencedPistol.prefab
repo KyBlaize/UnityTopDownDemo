@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 5646500427729754695}
   - component: {fileID: 2984550905724394748}
   - component: {fileID: 5557494195170328408}
+  - component: {fileID: 115802418}
   m_Layer: 0
   m_Name: SilencedPistol
   m_TagString: Untagged
@@ -124,3 +125,18 @@ MonoBehaviour:
   Damage: 1
   Range: 10
   ActorType: 0
+  GunEnd: {fileID: 1907673589}
+  ThisGun: {fileID: 11400000, guid: 7eb6dca1475090646b39f6f861eaf7a6, type: 2}
+--- !u!65 &115802418
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455794441989659013}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 0.3, z: 0.8}
+  m_Center: {x: 0, y: 0, z: 0.3}

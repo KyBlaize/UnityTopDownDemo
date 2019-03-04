@@ -6,22 +6,24 @@ using UnityEngine.SceneManagement;
 
 public class Overlord : MonoBehaviour
 {
-    //This script contains the game's timer and score tracking system
+    //---This script contains the game's timer and score tracking system
     int finalscore = 0;
     public Image Pointer;
-    [SerializeField]Text targetText;
-    [SerializeField]Button[] buttons;
+    [SerializeField]private Text targetText;
+    [SerializeField]private Button[] buttons;
     [HideInInspector]public bool StartTimer = false;
-    [HideInInspector]public float Currenttime = 0; //the player's current time. Timer starts when the player enters the zone and stops when they leave
+    [HideInInspector]public float Currenttime = 0; //---Timer starts when the player enters the zone and stops when they leave
     private List<TargetDummy> targets = new List<TargetDummy>();
 
     private void OnEnable() //if we are also subscribing to these events, should we use Awake or OnEnable?
     {
-        var _objects = FindObjectsOfType<TargetDummy>(); //get all potential targets in the level.
+        //---Get all potential targets in the level.
+        var _objects = FindObjectsOfType<TargetDummy>();
         foreach (TargetDummy actor in _objects)
         {
-            targets.Add(actor); //add each target to the target list
-            actor.Died += CheckForPenalty; //subscribe to target death events
+            //---Add each target to the target list and subscribe to events
+            targets.Add(actor);
+            actor.Died += CheckForPenalty;
         }
     }
 
@@ -30,7 +32,8 @@ public class Overlord : MonoBehaviour
         var _objects = FindObjectsOfType<TargetDummy>();
         foreach (TargetDummy actor in _objects)
         {
-            actor.Died -= CheckForPenalty; //unsubscribe to target death events
+            //---Unsub to target death events
+            actor.Died -= CheckForPenalty; 
         }
     }
 
@@ -40,9 +43,10 @@ public class Overlord : MonoBehaviour
         if (StartTimer)
         {
             Currenttime += Time.deltaTime;
-            string _minutes = Mathf.Floor(Currenttime / 60).ToString("00"); //get the minutes
-            string _seconds = Mathf.Floor(Currenttime % 60).ToString("00"); //get the seconds
-            string _milisec = (Mathf.Round(Currenttime * 100f) % 100f).ToString("00"); //milliseconds rounded to 2 digits
+            //---Get Minutes, Seconds, and Milliseconds to 2 decimal points
+            string _minutes = Mathf.Floor(Currenttime / 60).ToString("00");
+            string _seconds = Mathf.Floor(Currenttime % 60).ToString("00");
+            string _milisec = (Mathf.Round(Currenttime * 100f) % 100f).ToString("00");
 
             targetText.text = "Time: "+_minutes+":"+_seconds+":"+_milisec;
         }
@@ -68,15 +72,20 @@ public class Overlord : MonoBehaviour
 
     private void CheckForPenalty(BaseActor.ActorType actorType)
     {
-        //Hittting an enemy does nothing, but hitting a civilian will incur a +1sec to your final time
+        //---Hittting an enemy does nothing, but hitting a civilian will incur a +1sec to your final time
         if (actorType == BaseActor.ActorType.Player)
         {
             Debug.LogWarning("This should not be appearing");
         }
         if (actorType == BaseActor.ActorType.Civilian)
         {
+            /*
+             * Design point: A warning should be displayed regarding shooting civs.
+             *  - However, total time penalties should be applied at the end of the level.
+             *  - As a method of testing, we will keep it calculated in the game for now.
+             */
             Debug.Log("Don't shoot civvies!");
-            Currenttime+=1f;//TODO: Should this be calculated here, or at the end of the level?
+            Currenttime+=1f;
         }
         if (actorType == BaseActor.ActorType.Enemy)
         {

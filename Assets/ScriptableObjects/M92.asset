@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee56bc42164c5c24e9ff41e55a648f7b, type: 3}
-  m_Name: SemiAutoRifle
+  m_Name: M92
   m_EditorClassIdentifier: 
-  ReloadTime: 1
+  Name: Beretta M92
+  ReloadTime: 0.2
   MagazineSize: 10
-  CurrentMagazineRemainder: 0
-  Firing: 0
-  Damage: 30
-  Range: 200
+  CurrentMagazineRemainder: 5
+  Damage: 10
+  Range: 5
+  ShotColor: {r: 1, g: 0.9807559, b: 0.6084906, a: 1}
+  Fired: 0

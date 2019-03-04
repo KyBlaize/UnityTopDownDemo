@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a100eb07dcd7ad14fb49ee6fd355c15c, type: 3}
-  m_Name: AutoRifle
+  m_Name: AK47
   m_EditorClassIdentifier: 
-  ReloadTime: 1
+  Name: AK47
+  ReloadTime: 0.75
   MagazineSize: 30
-  CurrentMagazineRemainder: 30
-  Firing: 0
-  FireRate: 0.15
-  Damage: 10
-  Range: 150
+  CurrentMagazineRemainder: 0
+  FireRate: 0.2
+  Damage: 15
+  Range: 50
+  ShotColor: {r: 1, g: 0.94810134, b: 0.5613208, a: 1}

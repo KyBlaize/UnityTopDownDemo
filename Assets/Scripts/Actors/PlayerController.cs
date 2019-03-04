@@ -1,7 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
+/*
+ * Many things in this test/POC (proof-of concept) package are hard-coded into the system (such as player controls).
+ * However, to make sure that it is modular, and shows as much of my skill and knowledge of OOP and Unity programming, 
+ *  I have made sure to make code as flexible as possible.
+ * Many of the public/serialized fields will eventually be made private/hidden in inspector as most things will run
+ * Strictly speaking, picking up items should be placed in an Interface. However, considering the nature of this project, I have opted to leave it out for now
+ */
 public class PlayerController : BaseActor
 {
     //---Mouse look
@@ -10,40 +17,36 @@ public class PlayerController : BaseActor
     public float Speed = 1;
     public float Gravity = 20f;
     //---Misc.
-    public Transform RightHand; //For animated objects
-    public Transform LeftHand; //for animated objects
+    public Transform RightHand; //---Use as an anchor for equipment
+    public Transform LeftHand; //---Use as an anchor for equipment
+    public Text PlayerQuotesText;
+    public Vector3 WeaponScale;
 
     private CharacterController characterController;
-    private Vector3 direction; //Move diretion
+    private Vector3 direction; //---Move diretion
     private Camera camera;
-    [SerializeField] private BaseGun baseGun; //Set with the initialize function
-    [SerializeField] private GameObject ourWeapon; //This is the weapon that holds the raycast script
+    [SerializeField] private GameObject[] MyArsenal = new GameObject[2];
+    [SerializeField] private BaseGun baseGun; //---This is the type of weapon that we are using
+    [SerializeField] private GameObject ourWeapon; //---This will get passed into the baseGun
     
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         camera = Camera.main;
-        Health = 100;//Feed directly from the base actor class
-        if (baseGun != null)
-            Initialize(baseGun, ourWeapon);
-    }
-
-    private void Initialize(BaseGun gun, GameObject weapon)
-    {
-        baseGun = gun;
-        baseGun.Initialize(weapon);
+        Health = 100; //---Feed directly from the base actor class
+        PlayerQuotesText.enabled = false;
     }
 
     private void Update()
     {
         #region Aiming
-        Plane _plane = new Plane(Vector3.up, transform.position); //create a plane with the normal pointing up at the player's position
-        Ray _ray = camera.ScreenPointToRay(Input.mousePosition); //convert mouse position to screen position
-        float _hitDist = 0f; //set an initial distance
+        Plane _plane = new Plane(Vector3.up, transform.position); //---Create a plane with the normal pointing up at the player's position
+        Ray _ray = camera.ScreenPointToRay(Input.mousePosition); //---Convert mouse position to screen position
+        float _hitDist = 0f; //---Set an initial distance
         if (_plane.Raycast(_ray, out _hitDist))
         {
-            Vector3 _targetPoint = _ray.GetPoint(_hitDist); //set a point that the object will rotate towards
-            //slerp smoothly rotates to the target rotation
+            Vector3 _targetPoint = _ray.GetPoint(_hitDist); //---Set a point that the object will rotate towards
+            //---Slerp smoothly rotates to the target rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_targetPoint - transform.position), RotationSpeed * Time.deltaTime);
         }
         #endregion
@@ -56,20 +59,27 @@ public class PlayerController : BaseActor
         #endregion
 
         #region Use Equipment
-        if (Input.GetButton("Fire1"))//if the button is held down
+        if (Input.GetButton("Fire1"))//---Button is held down
         {
-            if (baseGun.CurrentMagazineRemainder > 0)
+            if (baseGun != null)
             {
-                UseEquipment();
+                if (baseGun.CurrentMagazineRemainder > 0)
+                {
+                    UseEquipment();
+                }
+                else
+                {
+                    StartCoroutine(ReloadEquipment());
+                }
             }
             else
-            {
-                StartCoroutine(ReloadEquipment());
-            }
+                PlayerQuotesText.enabled = true;
         }
-        if (Input.GetButtonUp("Fire1"))//after it is released
+        if (Input.GetButtonUp("Fire1"))//---After it is released
         {
-            baseGun.Firing = false;
+            if (MyArsenal[0] != null)
+                baseGun.TriggerReleased();
+            PlayerQuotesText.enabled = false; //keep this as a safety net for debugging purposes
         }
         #endregion
     }
@@ -84,17 +94,50 @@ public class PlayerController : BaseActor
 
     private void UseEquipment()
     {
-        baseGun.Fire();
+        baseGun.TriggerHeld();
     }
 
-    IEnumerator ReloadEquipment() //TODO: Replace this current reload system with an animation driven one
+    private IEnumerator ReloadEquipment() //TODO: Replace this current reload system with an animation driven one
     {
-        yield return new WaitForSeconds(baseGun.ReloadTime); //This will be replaced with an animation
+        yield return new WaitForSeconds(baseGun.ReloadTime);
         baseGun.Reload();
     }
 
-    //---Prevent gimble lock
-    public static float ClampAngle(float angle, float min, float max)
+    public void OnTriggerEnter(Collider other)
+    {
+        PutWeaponInHands(other.gameObject);
+        other.GetComponent<BoxCollider>().enabled = false;
+    }
+
+    private void PutWeaponInHands(GameObject gameobject) //---Put objects into loadout
+    {
+        //---Make the object a child of the right hand weapon, and scale accordingly
+        gameobject.transform.parent = RightHand;
+        gameobject.transform.localPosition = Vector3.zero;
+        gameobject.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        gameobject.transform.localScale = WeaponScale;
+
+        //---Place into the player's weapons arsenal
+        var _gun = gameobject.GetComponent<Firearm>().Gun;
+        for (int i = 0; i < MyArsenal.Length; i++)
+        {
+            if (MyArsenal[i] == null)
+            {
+                MyArsenal[i] = gameobject;
+                EquipWeapon(_gun, gameobject); //---Override the current active weapon
+                break;
+            }
+        }
+    }
+
+    private void EquipWeapon(BaseGun gun, GameObject gameobject) //---Set the active weapon
+    {
+        baseGun = gun;
+        gun.Initialize(gameobject);
+        ourWeapon = gameObject;
+    }
+
+    public static float ClampAngle(float angle, float min, float max) //---Prevent gimble lock
     {
         if (angle < -360f)
             angle += 360f;

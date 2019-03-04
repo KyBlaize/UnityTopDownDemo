@@ -1,41 +1,45 @@
 ﻿using System.Collections;
 using UnityEngine;
-
+/*
+ * Automatic weapons are different in that they require a cool down system
+ * They do not necessarily need TriggerReleased, though it is useful in terms of controlling recoil patterns
+ */
 [CreateAssetMenu(menuName ="Weapons/Automatic RayCast")]
 public class AutoRayCastWeapon : BaseGun
 {
-    public float FireRate = 1f; //time between shots
+    public float FireRate = 1f; //---Time between shots
     public float Damage;
     public float Range;
 
     private FireRayCastWeapon fireRayCastWeapon;
-
-    private float coolDownDuration; //the cooldown of the current weapon. This is set from the base cooldown
-    private float nextReadyTime; //When we can fire the weapon again
     private float coolDownTimeLeft = 0;
 
-    public override void Initialize(GameObject obj)
+    public override void Initialize(GameObject obj) 
     {
         fireRayCastWeapon = obj.GetComponent<FireRayCastWeapon>();
+
         fireRayCastWeapon.Damage = Damage;
         fireRayCastWeapon.Range = Range;
         CurrentMagazineRemainder = MagazineSize;
-        coolDownDuration = FireRate;
+        coolDownTimeLeft = 0;
     }
 
-    public override void Fire()
+    public override void TriggerHeld()
     {
-        if (Time.time > nextReadyTime)
+        if (coolDownTimeLeft <= 0)
         {
+            coolDownTimeLeft = FireRate;
             fireRayCastWeapon.Fire();
             CurrentMagazineRemainder--;
-            Debug.Log("Bullets left: "+CurrentMagazineRemainder); //Replace with UI feedback
-            nextReadyTime = coolDownDuration + Time.time;
-            coolDownTimeLeft = coolDownDuration;
-            Firing = true;
+            Debug.Log("Bullets left: " + CurrentMagazineRemainder); //Replace with UI feedback
         }
         else
             CoolDown();
+    }
+
+    public override void TriggerReleased()
+    {
+        coolDownTimeLeft = 0;
     }
 
     public override void Reload()
@@ -44,7 +48,7 @@ public class AutoRayCastWeapon : BaseGun
         CurrentMagazineRemainder = MagazineSize;
     }
 
-    public void CoolDown()
+    private void CoolDown()
     {
         coolDownTimeLeft -= Time.deltaTime;
     }
