@@ -13,7 +13,8 @@ public class Overlord : MonoBehaviour
     [SerializeField]private Button[] buttons;
     [HideInInspector]public bool StartTimer = false;
     [HideInInspector]public float Currenttime = 0; //---Timer starts when the player enters the zone and stops when they leave
-    private List<TargetDummy> targets = new List<TargetDummy>();
+    [SerializeField]private List<TargetDummy> targets = new List<TargetDummy>();
+    public int EnemiesRemaining = 0;
 
     private void OnEnable() //if we are also subscribing to these events, should we use Awake or OnEnable?
     {
@@ -22,6 +23,10 @@ public class Overlord : MonoBehaviour
         foreach (TargetDummy actor in _objects)
         {
             //---Add each target to the target list and subscribe to events
+            if (actor.tag == "Enemies")
+            {
+                EnemiesRemaining++;
+            }
             targets.Add(actor);
             actor.Died += CheckForPenalty;
         }
@@ -58,6 +63,11 @@ public class Overlord : MonoBehaviour
                 buttons[i].interactable = !buttons[i].interactable;
             }
         }
+
+        if (EnemiesRemaining == 0)
+        {
+            StartTimer = false;
+        }
     }
 
     public void Restart() //This is a temporary entry
@@ -89,6 +99,7 @@ public class Overlord : MonoBehaviour
         }
         if (actorType == BaseActor.ActorType.Enemy)
         {
+            EnemiesRemaining--;
             Debug.Log("It's ok, you can shoot enemies");
         }
     }

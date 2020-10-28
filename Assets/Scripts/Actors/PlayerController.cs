@@ -29,7 +29,7 @@ public class PlayerController : BaseActor
     [SerializeField] private BaseGun baseGun; //---This is the type of weapon that we are using
     [SerializeField] private GameObject ourWeapon; //---This will get passed into the baseGun
     
-    void Awake()
+    private void Awake()
     {
         characterController = GetComponent<CharacterController>();
         camera = Camera.main;
@@ -82,6 +82,25 @@ public class PlayerController : BaseActor
             PlayerQuotesText.enabled = false; //keep this as a safety net for debugging purposes
         }
         #endregion
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("Weapon 1");
+            baseGun = null;
+            ourWeapon = null;
+            MyArsenal[0].SetActive(true);
+            MyArsenal[1].SetActive(false);
+            EquipWeapon(MyArsenal[0].GetComponent<Firearm>().Gun, MyArsenal[0]);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Debug.Log("Weapon 2");
+            baseGun = null;
+            ourWeapon = null;
+            MyArsenal[0].SetActive(false);
+            MyArsenal[1].SetActive(true);
+            EquipWeapon(MyArsenal[1].GetComponent<Firearm>().Gun, MyArsenal[1]);
+        }
     }
 
     private void FixedUpdate()
@@ -92,17 +111,20 @@ public class PlayerController : BaseActor
         characterController.Move(direction * Speed * Time.deltaTime);
     }
 
+    #region Using Equipment
     private void UseEquipment()
     {
         baseGun.TriggerHeld();
     }
 
-    private IEnumerator ReloadEquipment() //TODO: Replace this current reload system with an animation driven one
+    private IEnumerator ReloadEquipment() //Best to replace this current reload system with an animation driven one
     {
         yield return new WaitForSeconds(baseGun.ReloadTime);
         baseGun.Reload();
     }
+    #endregion
 
+    #region Item pick up and switching
     public void OnTriggerEnter(Collider other)
     {
         PutWeaponInHands(other.gameObject);
@@ -124,7 +146,12 @@ public class PlayerController : BaseActor
             if (MyArsenal[i] == null)
             {
                 MyArsenal[i] = gameobject;
-                EquipWeapon(_gun, gameobject); //---Override the current active weapon
+                MyArsenal[i].SetActive(false);
+                if (ourWeapon == null)//---If there is no current active weapon, make this one active
+                {
+                    EquipWeapon(_gun, gameobject);
+                    MyArsenal[i].SetActive(true);
+                }
                 break;
             }
         }
@@ -136,6 +163,7 @@ public class PlayerController : BaseActor
         gun.Initialize(gameobject);
         ourWeapon = gameObject;
     }
+    #endregion
 
     public static float ClampAngle(float angle, float min, float max) //---Prevent gimble lock
     {

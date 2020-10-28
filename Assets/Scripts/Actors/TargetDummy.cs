@@ -16,7 +16,7 @@ public class TargetDummy : BaseActor
 
     public override void Die() //TODO: We also need to track who killed who
     {
-        animator.SetBool("Death", true); //play an animation
+        animator.SetTrigger("Death");
         if (Died != null) //first, ensure that died is not null, then call my event
         {
             Died(MyType);//The event listener needs to know what type of object it was
